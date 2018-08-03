@@ -3,17 +3,26 @@
 
 from bincrafters import build_template_default
 import copy
+import platform
 
 if __name__ == "__main__":
 
     builder = build_template_default.get_builder()
     
-    # Enable xmlpatterns and opengl
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
+
+      # Build shared only
+      if not options["Qt:shared"]:
+        continue
+
       new_options = copy.copy(options)
-      new_options["qt:xmlpatterns"] = True
       new_options["qt:opengl"] = "dynamic"
+      new_options["qt:qtxmlpatterns"] = True
+
+      if platform.system() == "Linux":
+        new_options["qt:qtx11extras"] = True
+
       filtered_builds.append([settings, new_options, env_vars, build_requires])
     builder.builds = filtered_builds
     
