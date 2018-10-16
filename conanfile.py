@@ -85,6 +85,15 @@ class QtConan(ConanFile):
                 pack_names = ["libxcb1-dev", "libx11-dev", "libc6-dev"]
             elif tools.os_info.is_linux and not tools.os_info.with_pacman:
                 pack_names = ["libxcb-devel", "libX11-devel", "glibc-devel"]
+            if self.options.opengl == 'desktop':
+                if tools.os_info.with_apt:
+                    pack_names.append('libgl1-mesa-dev')
+                else:
+                    if tools.os_info.linux_distro.startswith("opensuse"):
+                        pack_names.append("Mesa-libGL-devel")
+                    else:
+                        pack_names.append("mesa-libGL-devel")
+
 
             if pack_names:
                 installer = tools.SystemPackageTool()
