@@ -2,4 +2,4 @@
 
 // Implementation at:
 // https://github.com/ufz/jenkins-pipeline-library/blob/master/vars/conanBuild.groovy
-conanBuild("Qt/5.11.0")
+conanBuild("Qt/5.11.2")

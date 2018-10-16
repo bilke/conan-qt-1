@@ -3,10 +3,11 @@
 
 from bincrafters import build_template_default
 import copy
+import os
 import platform
 
 if __name__ == "__main__":
-
+    os.environ['CONAN_REMOTES'] = 'https://api.bintray.com/conan/bincrafters/public-conan'
     builder = build_template_default.get_builder()
     
     filtered_builds = []
