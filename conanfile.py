@@ -60,7 +60,7 @@ class QtConan(ConanFile):
         }, **{module: [True,False] for module in submodules}
     )
     no_copy_source = True
-    default_options = ("shared=True", "commercial=False", "opengl=desktop", "openssl=False", "GUI=True", "widgets=True", "config=None") + tuple(module + "=False" for module in submodules)
+    default_options = ("shared=True", "commercial=False", "opengl=dynamic", "openssl=False", "GUI=True", "widgets=True", "config=None") + tuple(module + "=False" for module in submodules)
     short_paths = True
     build_policy = "missing"
     
@@ -85,15 +85,6 @@ class QtConan(ConanFile):
                 pack_names = ["libxcb1-dev", "libx11-dev", "libc6-dev"]
             elif tools.os_info.is_linux and not tools.os_info.with_pacman:
                 pack_names = ["libxcb-devel", "libX11-devel", "glibc-devel"]
-            if self.options.opengl == 'desktop':
-                if tools.os_info.with_apt:
-                    pack_names.append('libgl1-mesa-dev')
-                else:
-                    if tools.os_info.linux_distro.startswith("opensuse"):
-                        pack_names.append("Mesa-libGL-devel")
-                    else:
-                        pack_names.append("mesa-libGL-devel")
-
 
             if pack_names:
                 installer = tools.SystemPackageTool()
@@ -129,13 +120,13 @@ class QtConan(ConanFile):
             if tools.os_info.is_linux:
                 if tools.os_info.with_apt: 
                     pack_names = ["libxcb1", "libx11-6"]
-                    if self.options.opengl == "desktop":
+                    if self.options.opengl in ['desktop', 'dynamic']:
                         pack_names.append("libgl1-mesa-dev")
                 else:
                     if not tools.os_info.linux_distro.startswith("opensuse"):
                         pack_names = ["libxcb"]
                     if not tools.os_info.with_pacman:
-                        if self.options.opengl == "desktop":
+                        if self.options.opengl in ['desktop', 'dynamic']:
                             if tools.os_info.linux_distro.startswith("opensuse"):
                                 pack_names.append("Mesa-libGL-devel")
                             else:
