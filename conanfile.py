@@ -63,7 +63,7 @@ class QtConan(ConanFile):
     default_options = ("shared=True", "commercial=False", "opengl=dynamic", "openssl=False", "GUI=True", "widgets=True", "config=None") + tuple(module + "=False" for module in submodules)
     short_paths = True
     build_policy = "missing"
-    
+
     def system_package_architecture(self):
         if tools.os_info.with_apt:
             if self.settings.arch == "x86":
@@ -118,7 +118,7 @@ class QtConan(ConanFile):
         if self.options.GUI:
             pack_names = []
             if tools.os_info.is_linux:
-                if tools.os_info.with_apt: 
+                if tools.os_info.with_apt:
                     pack_names = ["libxcb1", "libx11-6"]
                     if self.options.opengl in ['desktop', 'dynamic']:
                         pack_names.append("libgl1-mesa-dev")
@@ -146,7 +146,7 @@ class QtConan(ConanFile):
         else:  # python 2 cannot deal with .xz archives
             self.run("wget -qO- %s.tar.xz | tar -xJ " % url)
         shutil.move("qt-everywhere-src-%s" % self.version, "qt5")
-        
+
         for patch in [
           "cc04651dea4c4678c626cb31b3ec8394426e2b25.diff",
           "ba22a6731377c8604d13e3855204c03652c0a2e3.diff",
@@ -272,7 +272,7 @@ class QtConan(ConanFile):
             libs = self.deps_cpp_info["OpenSSL"].libs
             lib_paths = self.deps_cpp_info["OpenSSL"].lib_paths
             os.environ["OPENSSL_LIBS"] = " ".join(["-L"+i for i in lib_paths] + ["-l"+i for i in libs])
-        
+
         if self.settings.os == "Linux":
             if self.options.GUI:
                 args.append("-qt-xcb")
@@ -321,8 +321,8 @@ class QtConan(ConanFile):
                 _build(self, "mingw32-make", args)
         else:
             _build(self, "make", args)
-            
-        with open('qtbase/bin/qt.conf', 'w') as f: 
+
+        with open('qtbase/bin/qt.conf', 'w') as f:
             f.write('[Paths]\nPrefix = ..')
 
     def package(self):
