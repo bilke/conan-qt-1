@@ -9,7 +9,7 @@ import platform
 if __name__ == "__main__":
     os.environ['CONAN_REMOTES'] = 'https://api.bintray.com/conan/bincrafters/public-conan'
     builder = build_template_default.get_builder()
-    
+
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
 
@@ -18,7 +18,6 @@ if __name__ == "__main__":
         continue
 
       new_options = copy.copy(options)
-      new_options["qt:opengl"] = "dynamic"
       new_options["qt:qtxmlpatterns"] = True
 
       if platform.system() == "Linux":
@@ -26,5 +25,5 @@ if __name__ == "__main__":
 
       filtered_builds.append([settings, new_options, env_vars, build_requires])
     builder.builds = filtered_builds
-    
+
     builder.run()
