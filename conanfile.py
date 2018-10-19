@@ -93,6 +93,11 @@ class QtConan(ConanFile):
         if tools.os_info.is_windows and self.settings.compiler == "Visual Studio":
             self.build_requires("jom_installer/1.1.2@bincrafters/stable")
 
+    def config_options(self):
+        if not tools.os_info.is_linux:
+            del self.options.qtx11extras
+            del QtConan.submodules['qtx11extras']
+
     def configure(self):
         if self.options.openssl:
             self.requires("OpenSSL/1.1.0g@conan/stable")
@@ -103,7 +108,6 @@ class QtConan(ConanFile):
             self.options.opengl = "no"
         if self.settings.os == "Android" and self.options.opengl == "desktop":
             self.output.error("OpenGL desktop is not supported on Android. Consider using OpenGL es2")
-        self.options.qtx11extras = tools.os_info.is_linux
 
         assert QtConan.version == QtConan.submodules['qtbase']['branch']
         def enablemodule(self, module):
