@@ -3,10 +3,10 @@
 
 from conans import ConanFile, tools
 from conans.model import Generator
-import os
-import sys
-import shutil
 import configparser
+import os
+import shutil
+import sys
 
 class qt(Generator):
     @property
@@ -103,6 +103,7 @@ class QtConan(ConanFile):
             self.options.opengl = "no"
         if self.settings.os == "Android" and self.options.opengl == "desktop":
             self.output.error("OpenGL desktop is not supported on Android. Consider using OpenGL es2")
+        self.options.qtx11extras = tools.os_info.is_linux
 
         assert QtConan.version == QtConan.submodules['qtbase']['branch']
         def enablemodule(self, module):
