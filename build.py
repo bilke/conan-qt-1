@@ -18,10 +18,10 @@ if __name__ == "__main__":
         continue
 
       new_options = copy.copy(options)
-      new_options["qt:qtxmlpatterns"] = True
+      new_options["Qt:qtxmlpatterns"] = True
 
       if platform.system() == "Linux":
-        new_options["qt:qtx11extras"] = True
+        new_options["Qt:qtx11extras"] = True
 
       filtered_builds.append([settings, new_options, env_vars, build_requires])
     builder.builds = filtered_builds
