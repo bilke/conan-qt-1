@@ -65,7 +65,7 @@ class QtConan(ConanFile):
     short_paths = True
     build_policy = "missing"
 
-    def system_package_architecture(self):
+    def _system_package_architecture(self):
         if tools.os_info.with_apt:
             if self.settings.arch == "x86":
                 return ':i386'
@@ -84,12 +84,17 @@ class QtConan(ConanFile):
             pack_names = []
             if tools.os_info.with_apt:
                 pack_names = ["libxcb1-dev", "libx11-dev", "libc6-dev"]
+                if self.options.fontconfig:
+                    pack_names.extend(["fontconfig", "libfreetype6"])
             elif tools.os_info.is_linux and not tools.os_info.with_pacman:
                 pack_names = ["libxcb-devel", "libX11-devel", "glibc-devel"]
+                if self.options.fontconfig:
+                    pack_names.extend(["fontconfig", "freetype"])
 
             if pack_names:
                 installer = tools.SystemPackageTool()
-                installer.install(" ".join([item + self.system_package_architecture() for item in pack_names]))
+                for item in pack_names:
+                    installer.install(item + self._system_package_architecture())
 
         if tools.os_info.is_windows and self.settings.compiler == "Visual Studio":
             self.build_requires("jom_installer/1.1.2@bincrafters/stable")
@@ -129,6 +134,8 @@ class QtConan(ConanFile):
                     pack_names = ["libxcb1", "libx11-6"]
                     if self.options.opengl in ['desktop', 'dynamic']:
                         pack_names.append("libgl1-mesa-dev")
+                    elif self.options.opengl == "es2":
+                        pack_names.append("libgles2-mesa-dev")
                     if self.options.fontconfig:
                         pack_names.extend(["libfontconfig1-dev", "libfreetype6-dev"])
                 else:
@@ -145,7 +152,8 @@ class QtConan(ConanFile):
 
             if pack_names:
                 installer = tools.SystemPackageTool()
-                installer.install(" ".join([item + self.system_package_architecture() for item in pack_names]))
+                for item in pack_names:
+                    installer.install(item + self._system_package_architecture())
 
     def source(self):
         url = "http://download.qt.io/official_releases/qt/{0}/{1}/single/qt-everywhere-src-{1}"\
