@@ -57,10 +57,11 @@ class QtConan(ConanFile):
         "GUI": [True, False],
         "widgets": [True, False],
         "config": "ANY",
+        "fontconfig": [True, False],
         }, **{module: [True,False] for module in submodules}
     )
     no_copy_source = True
-    default_options = ("shared=True", "commercial=False", "opengl=dynamic", "openssl=False", "GUI=True", "widgets=True", "config=None") + tuple(module + "=False" for module in submodules)
+    default_options = ("shared=True", "commercial=False", "opengl=dynamic", "openssl=False", "GUI=True", "widgets=True", "config=None", "fontconfig=True") + tuple(module + "=False" for module in submodules)
     short_paths = True
     build_policy = "missing"
 
@@ -95,6 +96,7 @@ class QtConan(ConanFile):
 
     def config_options(self):
         if not tools.os_info.is_linux:
+            del self.options.fontconfig
             del self.options.qtx11extras
             del QtConan.submodules['qtx11extras']
 
@@ -127,6 +129,8 @@ class QtConan(ConanFile):
                     pack_names = ["libxcb1", "libx11-6"]
                     if self.options.opengl in ['desktop', 'dynamic']:
                         pack_names.append("libgl1-mesa-dev")
+                    if self.options.fontconfig:
+                        pack_names.extend(["libfontconfig1-dev", "libfreetype6-dev"])
                 else:
                     if not tools.os_info.linux_distro.startswith("opensuse"):
                         pack_names = ["libxcb"]
@@ -136,6 +140,8 @@ class QtConan(ConanFile):
                                 pack_names.append("Mesa-libGL-devel")
                             else:
                                 pack_names.append("mesa-libGL-devel")
+                        if self.options.fontconfig:
+                            pack_names.extend(["fontconfig-devel", "freetype-devel"])
 
             if pack_names:
                 installer = tools.SystemPackageTool()
@@ -250,6 +256,8 @@ class QtConan(ConanFile):
             args.append("-optimize-size")
         else:
             args.append("-release")
+        if self.options.fontconfig:
+            args.append("-fontconfig")
         for module in QtConan.submodules:
             if not getattr(self.options, module) and os.path.isdir(os.path.join(self.source_folder, 'qt5', QtConan.submodules[module]['path'])):
                 args.append("-skip " + module)
